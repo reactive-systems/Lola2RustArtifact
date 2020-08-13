@@ -1,0 +1,5 @@
+input altitude: Int32
+output tooLow: Bool := altitude.offset(by:-1).defaults(to:0) < 200 && altitude < 200 && altitude.offset(by:1).defaults(to:0) < 200
+output tooHigh: Bool := altitude.offset(by:-1).defaults(to:0) > 600 && altitude > 600 && altitude.offset(by:1).defaults(to:0) > 600
+trigger tooLow "Flying below minimum altitude"
+trigger tooHigh "Flying above maximum altitude"
