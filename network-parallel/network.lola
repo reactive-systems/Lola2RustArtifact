@@ -1,0 +1,13 @@
+input src: Int32, dst: Int32
+input fin:Bool , push:Bool , syn : Bool
+input length : Int32
+constant server : Int32 := 213451
+output count :=  if count.offset(by:-1).defaults(to:0) > 201 then 0 else count.offset(by:-1).defaults(to:0) + 1
+output receiver := if (dst == server) then receiver.offset(by:-1).defaults(to:0) + 1 else if count > 200 then 0 else receiver.offset(by:-1).defaults(to:0)
+trigger receiver > 50 "many incoming connections"
+output received := if dst==server & push then 0 else length
+output workload := if count > 200 then workload.offset(by:-1).defaults(to:0) + 1 else 0
+trigger workload > 25 " Workload too high"
+output opened := opened.offset(by:-1).defaults(to:0) + (if dst == server & syn then 1 else 0)
+output closed := closed.offset(by:-1).defaults(to:0) + ( if dst = server & fin then 1 else 0)
+trigger opened - closed < 0 "Closed more connection than were open"
